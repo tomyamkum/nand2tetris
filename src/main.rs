@@ -1,6 +1,6 @@
-mod common;
+pub mod common;
 
 fn main() {
-  let a: bool = common::gate::nand(false, true);
-  println!("{}", a);
+    let a: bool = common::gate::nand(false, true);
+    println!("{}", a);
 }
