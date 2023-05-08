@@ -1,3 +1,6 @@
+mod common;
+
 fn main() {
-    println!("Hello, world!");
+  let a: bool = common::gate::nand(false, true);
+  println!("{}", a);
 }
