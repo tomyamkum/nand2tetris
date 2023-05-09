@@ -59,11 +59,17 @@ fn dmux_test() {
   for input in [true, false] {
     for sel in [true, false] {
       if sel {
-        assert_eq!((false, input), gate::dmux(input, sel))
+        assert_eq!((false, input), gate::dmux(input, sel));
       }
       else {
-        assert_eq!((input, false), gate::dmux(input, sel))
+        assert_eq!((input, false), gate::dmux(input, sel));
       }
     }
   }
+}
+
+#[test]
+fn not16_test() {
+  let a:[bool; 16] = [true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false];
+  assert_eq!([false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true], gate::not16(a));
 }
