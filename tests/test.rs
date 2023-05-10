@@ -59,12 +59,32 @@ fn dmux_test() {
     for input in [true, false] {
         for sel in [true, false] {
             if sel {
-                assert_eq!((false, input), gate::dmux(input, sel));
+                assert_eq!([false, input], gate::dmux(input, sel));
             } else {
-                assert_eq!((input, false), gate::dmux(input, sel));
+                assert_eq!([input, false], gate::dmux(input, sel));
             }
         }
     }
+}
+
+#[test]
+fn dmux4way_test() {
+    assert_eq!([true, false, false, false], gate::dmux4way(true, [false, false]));
+    assert_eq!([false, true, false, false], gate::dmux4way(true, [true, false]));
+    assert_eq!([false, false, true, false], gate::dmux4way(true, [false, true]));
+    assert_eq!([false, false, false, true], gate::dmux4way(true, [true, true]));
+}
+
+#[test]
+fn dmux8way_test() {
+    assert_eq!([true, false, false, false, false, false, false, false], gate::dmux8way(true, [false, false, false]));
+    assert_eq!([false, true, false, false, false, false, false, false], gate::dmux8way(true, [true, false, false]));
+    assert_eq!([false, false, true, false, false, false, false, false], gate::dmux8way(true, [false, true, false]));
+    assert_eq!([false, false, false, true, false, false, false, false], gate::dmux8way(true, [true, true, false]));
+    assert_eq!([false, false, false, false, true, false, false, false], gate::dmux8way(true, [false, false, true]));
+    assert_eq!([false, false, false, false, false, true, false, false], gate::dmux8way(true, [true, false, true]));
+    assert_eq!([false, false, false, false, false, false, true, false], gate::dmux8way(true, [false, true, true]));
+    assert_eq!([false, false, false, false, false, false, false, true], gate::dmux8way(true, [true, true, true]));
 }
 
 #[test]

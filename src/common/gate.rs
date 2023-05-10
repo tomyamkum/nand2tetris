@@ -125,6 +125,12 @@ pub fn dmux(input: bool, sel: bool) -> [bool; 2] {
     [and(input, not(sel)), and(input, sel)]
 }
 
-//pub fn dmux4way(input: bool, sel: [bool; 2]) -> [bool; 4] {
-//  []
-//}
+#[rustfmt::skip]
+pub fn dmux4way(input: bool, sel: [bool; 2]) -> [bool; 4] {
+    [dmux(dmux(input, sel[1])[0], sel[0])[0], dmux(dmux(input, sel[1])[0], sel[0])[1], dmux(dmux(input, sel[1])[1], sel[0])[0], dmux(dmux(input, sel[1])[1], sel[0])[1]]
+}
+
+#[rustfmt::skip]
+pub fn dmux8way(input: bool, sel: [bool; 3]) -> [bool; 8] {
+    [dmux4way(dmux(input, sel[2])[0], [sel[0], sel[1]])[0], dmux4way(dmux(input, sel[2])[0], [sel[0], sel[1]])[1], dmux4way(dmux(input, sel[2])[0], [sel[0], sel[1]])[2], dmux4way(dmux(input, sel[2])[0], [sel[0], sel[1]])[3], dmux4way(dmux(input, sel[2])[1], [sel[0], sel[1]])[0], dmux4way(dmux(input, sel[2])[1], [sel[0], sel[1]])[1], dmux4way(dmux(input, sel[2])[1], [sel[0], sel[1]])[2], dmux4way(dmux(input, sel[2])[1], [sel[0], sel[1]])[3]]
+}
