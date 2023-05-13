@@ -1,5 +1,24 @@
 extern crate nand2tetris;
+use nand2tetris::common::alu;
 use nand2tetris::common::gate;
+
+const zero: [bool; 16] = [
+    false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false,
+];
+const one: [bool; 16] = [
+    true, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false,
+];
+const minus_one: [bool; 16] = [
+    true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+];
+
+fn minus_input(mut x: [bool; 16]) -> [bool; 16] {
+    x = gate::flip(x, true);
+    x = alu::inc16(x);
+    x
+}
 
 #[test]
 fn nand_test() {
@@ -69,22 +88,58 @@ fn dmux_test() {
 
 #[test]
 fn dmux4way_test() {
-    assert_eq!([true, false, false, false], gate::dmux4way(true, [false, false]));
-    assert_eq!([false, true, false, false], gate::dmux4way(true, [true, false]));
-    assert_eq!([false, false, true, false], gate::dmux4way(true, [false, true]));
-    assert_eq!([false, false, false, true], gate::dmux4way(true, [true, true]));
+    assert_eq!(
+        [true, false, false, false],
+        gate::dmux4way(true, [false, false])
+    );
+    assert_eq!(
+        [false, true, false, false],
+        gate::dmux4way(true, [true, false])
+    );
+    assert_eq!(
+        [false, false, true, false],
+        gate::dmux4way(true, [false, true])
+    );
+    assert_eq!(
+        [false, false, false, true],
+        gate::dmux4way(true, [true, true])
+    );
 }
 
 #[test]
 fn dmux8way_test() {
-    assert_eq!([true, false, false, false, false, false, false, false], gate::dmux8way(true, [false, false, false]));
-    assert_eq!([false, true, false, false, false, false, false, false], gate::dmux8way(true, [true, false, false]));
-    assert_eq!([false, false, true, false, false, false, false, false], gate::dmux8way(true, [false, true, false]));
-    assert_eq!([false, false, false, true, false, false, false, false], gate::dmux8way(true, [true, true, false]));
-    assert_eq!([false, false, false, false, true, false, false, false], gate::dmux8way(true, [false, false, true]));
-    assert_eq!([false, false, false, false, false, true, false, false], gate::dmux8way(true, [true, false, true]));
-    assert_eq!([false, false, false, false, false, false, true, false], gate::dmux8way(true, [false, true, true]));
-    assert_eq!([false, false, false, false, false, false, false, true], gate::dmux8way(true, [true, true, true]));
+    assert_eq!(
+        [true, false, false, false, false, false, false, false],
+        gate::dmux8way(true, [false, false, false])
+    );
+    assert_eq!(
+        [false, true, false, false, false, false, false, false],
+        gate::dmux8way(true, [true, false, false])
+    );
+    assert_eq!(
+        [false, false, true, false, false, false, false, false],
+        gate::dmux8way(true, [false, true, false])
+    );
+    assert_eq!(
+        [false, false, false, true, false, false, false, false],
+        gate::dmux8way(true, [true, true, false])
+    );
+    assert_eq!(
+        [false, false, false, false, true, false, false, false],
+        gate::dmux8way(true, [false, false, true])
+    );
+    assert_eq!(
+        [false, false, false, false, false, true, false, false],
+        gate::dmux8way(true, [true, false, true])
+    );
+    assert_eq!(
+        [false, false, false, false, false, false, true, false],
+        gate::dmux8way(true, [false, true, true])
+    );
+    assert_eq!(
+        [false, false, false, false, false, false, false, true],
+        gate::dmux8way(true, [true, true, true])
+    );
 }
 
 #[test]
@@ -128,4 +183,121 @@ fn mux8way16_test() {
     assert_eq!(f, gate::mux8way16(a, b, c, d, e, f, g, h, [true, false, true]));
     assert_eq!(g, gate::mux8way16(a, b, c, d, e, f, g, h, [false, true, true]));
     assert_eq!(h, gate::mux8way16(a, b, c, d, e, f, g, h, [true, true, true]));
+}
+
+#[test]
+fn halfadder_test() {
+    assert_eq!([false, false], alu::halfadder(false, false));
+    assert_eq!([true, false], alu::halfadder(true, false));
+    assert_eq!([true, false], alu::halfadder(false, true));
+    assert_eq!([false, true], alu::halfadder(true, true));
+}
+
+#[test]
+fn fulladder_test() {
+    assert_eq!([false, false], alu::fulladder(false, false, false));
+    assert_eq!([true, false], alu::fulladder(false, false, true));
+    assert_eq!([true, false], alu::fulladder(false, true, false));
+    assert_eq!([false, true], alu::fulladder(false, true, true));
+    assert_eq!([true, false], alu::fulladder(true, false, false));
+    assert_eq!([false, true], alu::fulladder(true, false, true));
+    assert_eq!([false, true], alu::fulladder(true, true, false));
+    assert_eq!([true, true], alu::fulladder(true, true, true));
+}
+
+#[test]
+fn zero_test() {
+    let x: [bool; 16] = [
+        true, true, true, true, true, true, true, true, false, false, false, false, false, false,
+        false, false,
+    ];
+    assert_eq!(zero, gate::zero(x, true));
+}
+
+#[test]
+fn alu_test() {
+    let x: [bool; 16] = [
+        true, true, true, true, true, true, true, true, false, false, false, false, false, false,
+        false, false,
+    ];
+    let y: [bool; 16] = [
+        true, false, true, false, true, false, true, false, false, false, false, false, false,
+        false, false, false,
+    ];
+    assert_eq!(
+        (zero, true, false),
+        alu::alu(x, y, true, false, true, false, true, false)
+    );
+    assert_eq!(
+        (one, false, false),
+        alu::alu(x, y, true, true, true, true, true, true)
+    );
+    assert_eq!(
+        (minus_one, false, true),
+        alu::alu(x, y, true, true, true, false, true, false)
+    );
+    assert_eq!(
+        (minus_one, false, true),
+        alu::alu(x, y, true, false, true, true, true, false)
+    );
+    assert_eq!(
+        (x, false, false),
+        alu::alu(x, y, false, false, true, true, false, false)
+    );
+    assert_eq!(
+        (y, false, false),
+        alu::alu(x, y, true, true, false, false, false, false)
+    );
+    assert_eq!(
+        (gate::flip(x, true), false, true),
+        alu::alu(x, y, false, false, true, true, false, true)
+    );
+    assert_eq!(
+        (gate::flip(y, true), false, true),
+        alu::alu(x, y, true, true, false, false, false, true)
+    );
+    assert_eq!(
+        (minus_input(x), false, true),
+        alu::alu(x, y, false, false, true, true, true, true)
+    );
+    assert_eq!(
+        (minus_input(y), false, true),
+        alu::alu(x, y, true, true, false, false, true, true)
+    );
+    assert_eq!(
+        (alu::inc16(x), false, false),
+        alu::alu(x, y, false, true, true, true, true, true)
+    );
+    assert_eq!(
+        (alu::inc16(y), false, false),
+        alu::alu(x, y, true, true, false, true, true, true)
+    );
+    assert_eq!(
+        (alu::add16(x, minus_one), false, false),
+        alu::alu(x, y, false, false, true, true, true, false)
+    );
+    assert_eq!(
+        (alu::add16(y, minus_one), false, false),
+        alu::alu(x, y, true, true, false, false, true, false)
+    );
+    assert_eq!(
+        (alu::add16(x, y), false, false),
+        alu::alu(x, y, false, false, false, false, true, false)
+    );
+    assert_eq!(
+        (alu::add16(x, minus_input(y)), false, false),
+        alu::alu(x, y, false, true, false, false, true, true)
+    );
+    assert_eq!(
+        (alu::add16(minus_input(x), y), false, true),
+        alu::alu(x, y, false, false, false, true, true, true)
+    );
+    assert_eq!(
+        (gate::and16(x, y), false, false),
+        alu::alu(x, y, false, false, false, false, false, false)
+    );
+    assert_eq!(
+        (gate::or16(x, y), false, false),
+        alu::alu(x, y, false, true, false, true, false, true)
+    );
 }
