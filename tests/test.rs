@@ -1,16 +1,18 @@
 extern crate nand2tetris;
 use nand2tetris::common::alu;
 use nand2tetris::common::gate;
+//use nand2tetris::common::dff;
+use nand2tetris::common::memory;
 
-const zero: [bool; 16] = [
+const ZERO: [bool; 16] = [
     false, false, false, false, false, false, false, false, false, false, false, false, false,
     false, false, false,
 ];
-const one: [bool; 16] = [
+const ONE: [bool; 16] = [
     true, false, false, false, false, false, false, false, false, false, false, false, false,
     false, false, false,
 ];
-const minus_one: [bool; 16] = [
+const MINUS_ONE: [bool; 16] = [
     true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
 ];
 
@@ -211,7 +213,7 @@ fn zero_test() {
         true, true, true, true, true, true, true, true, false, false, false, false, false, false,
         false, false,
     ];
-    assert_eq!(zero, gate::zero(x, true));
+    assert_eq!(ZERO, gate::zero(x, true));
 }
 
 #[test]
@@ -225,19 +227,19 @@ fn alu_test() {
         false, false, false,
     ];
     assert_eq!(
-        (zero, true, false),
+        (ZERO, true, false),
         alu::alu(x, y, true, false, true, false, true, false)
     );
     assert_eq!(
-        (one, false, false),
+        (ONE, false, false),
         alu::alu(x, y, true, true, true, true, true, true)
     );
     assert_eq!(
-        (minus_one, false, true),
+        (MINUS_ONE, false, true),
         alu::alu(x, y, true, true, true, false, true, false)
     );
     assert_eq!(
-        (minus_one, false, true),
+        (MINUS_ONE, false, true),
         alu::alu(x, y, true, false, true, true, true, false)
     );
     assert_eq!(
@@ -273,11 +275,11 @@ fn alu_test() {
         alu::alu(x, y, true, true, false, true, true, true)
     );
     assert_eq!(
-        (alu::add16(x, minus_one), false, false),
+        (alu::add16(x, MINUS_ONE), false, false),
         alu::alu(x, y, false, false, true, true, true, false)
     );
     assert_eq!(
-        (alu::add16(y, minus_one), false, false),
+        (alu::add16(y, MINUS_ONE), false, false),
         alu::alu(x, y, true, true, false, false, true, false)
     );
     assert_eq!(
@@ -300,4 +302,26 @@ fn alu_test() {
         (gate::or16(x, y), false, false),
         alu::alu(x, y, false, true, false, true, false, true)
     );
+}
+
+#[test]
+fn bit_test() {
+    let init_state: bool = true;
+    let mut bit: memory::Bit = memory::Bit::new(init_state);
+    assert_eq!(true, bit.load(false, false));
+    assert_eq!(true, bit.load(false, true));
+    assert_eq!(false, bit.load(true, false));
+    assert_eq!(false, bit.load(true, true));
+    assert_eq!(true, bit.load(false, false));
+}
+
+#[test]
+fn register_test() {
+    let mut reg: memory::Register = memory::Register::new();
+    let input1: [bool; 16] = [true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false];
+    let input2: [bool; 16] = [false, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false];
+    let load: [bool; 16] = [true; 16];
+    reg.load(input1, load);
+    assert_eq!(input1, reg.load(input2, load));
+    assert_eq!(input2, reg.load(input2, load));
 }

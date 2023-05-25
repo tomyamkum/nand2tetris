@@ -1,6 +1,6 @@
 use crate::common::gate;
 
-const one: [bool; 16] = [
+const ONE: [bool; 16] = [
     true, false, false, false, false, false, false, false, false, false, false, false, false,
     false, false, false,
 ];
@@ -26,7 +26,7 @@ pub fn add16(a: [bool; 16], b: [bool; 16]) -> [bool; 16] {
 }
 
 pub fn inc16(input: [bool; 16]) -> [bool; 16] {
-    add16(input, one)
+    add16(input, ONE)
 }
 
 pub fn alu(
