@@ -318,8 +318,14 @@ fn bit_test() {
 #[test]
 fn register_test() {
     let mut reg: memory::Register = memory::Register::new();
-    let input1: [bool; 16] = [true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false];
-    let input2: [bool; 16] = [false, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false];
+    let input1: [bool; 16] = [
+        true, true, true, true, true, true, true, true, false, false, false, false, false, false,
+        false, false,
+    ];
+    let input2: [bool; 16] = [
+        false, true, true, true, true, true, true, true, false, false, false, false, false, false,
+        false, false,
+    ];
     let load: [bool; 16] = [true; 16];
     reg.load(input1, load);
     assert_eq!(input1, reg.load(input2, load));
